@@ -1,0 +1,5 @@
+# This directory is a Syncthing folder marker.
+# Do not delete.
+
+folderID: dotnet
+created: 2026-06-25T10:02:53+03:00

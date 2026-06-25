@@ -1,0 +1,37 @@
+@model IEnumerable<nsi.Models.MedicalOrganization>
+@{
+    ViewData["Title"] = "Медицинские организации";
+}
+
+<h2>Медицинские организации</h2>
+<table class="table table-striped table-bordered table-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Код</th>
+            <th>Полное название</th>
+            <th>Краткое название</th>
+            <th>Регион</th>
+            <th>OID организации</th>
+            <th>Дата начала</th>
+            <th>Дата окончания</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var org in Model)
+        {
+            <tr>
+                <td>@org.Code</td>
+                <td>@org.NameFull</td>
+                <td>@org.NameShort</td>
+                <td>@org.Region</td>
+                <td>@org.EoOid</td>
+                <td>@org.BeginDate?.ToString("dd.MM.yyyy")</td>
+                <td>@org.EndDate?.ToString("dd.MM.yyyy")</td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="7" class="text-center text-muted">Записи отсутствуют</td></tr>
+        }
+    </tbody>
+</table>
