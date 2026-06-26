@@ -12,4 +12,8 @@
         <PackageReference Include="System.Net.Http.WinHttpHandler" Version="9.0.5" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Entities\Map\" />
+    </ItemGroup>
+
 </Project>
