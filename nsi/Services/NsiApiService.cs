@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using NHibernate;
 using nsi.Models;
 using ISession = NHibernate.ISession;
 
@@ -15,6 +14,8 @@ public class NsiApiService
     private const string Identifier = "1.2.643.5.1.13.13.99.2.1245";
     private const string BaseUrl = "https://nsi.rosminzdrav.ru/port/rest/data";
 
+    private const int RetryCount = 5;
+    
     public NsiApiService(HttpClient http, ISession db)
     {
         _http = http;
@@ -27,33 +28,13 @@ public class NsiApiService
         const int pageSize = 100;
         int savedCount = 0;
 
-        while (true)
+        var apiResponse = await FetchPageAsync(page, pageSize);
+        while (apiResponse != null)
         {
-            var url = $"{BaseUrl}?identifier={Identifier}&userKey={UserKey}&page={page}&size={pageSize}";
-            string response = null;
-            try
-            {
-                response = await _http.GetStringAsync(url);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-
-            if (string.IsNullOrEmpty(response))
-            {
-                break;
-            }
-            
-            var apiResponse = JsonSerializer.Deserialize<NsiResponse>(response);
-            if (apiResponse?.List == null || apiResponse.List.Count == 0)
-                break;
             using var tx = _db.BeginTransaction();
             foreach (var row in apiResponse.List)
             {
                 var dict = row.ToDictionary(x => x.Column, x => x.Value);
-
                 var org = new MedicalOrganization
                 {
                     Code = dict.GetValueOrDefault("code") ?? string.Empty,
@@ -64,7 +45,6 @@ public class NsiApiService
                     BeginDate = ParseDate(dict.GetValueOrDefault("beginDate")),
                     EndDate = ParseDate(dict.GetValueOrDefault("endDate")),
                 };
-
                 _db.Save(org);
                 savedCount++;
             }
@@ -74,10 +54,28 @@ public class NsiApiService
                 break;
 
             page++;
-            
+            apiResponse = await FetchPageAsync(page, pageSize);
         }
 
         return savedCount;
+    }
+
+    private async Task<NsiResponse?> FetchPageAsync(int page, int pageSize)
+    {
+        var url = $"{BaseUrl}?identifier={Identifier}&userKey={UserKey}&page={page}&size={pageSize}";
+        for (int attempt = 1; attempt <= RetryCount; attempt++)
+        {
+            try
+            {
+                var response = await _http.GetStringAsync(url);
+                return JsonSerializer.Deserialize<NsiResponse>(response);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Attempt {attempt}/{RetryCount} failed: {ex.Message}");
+            }
+        }
+        return null;
     }
 
     private static DateTime? ParseDate(string? value)
