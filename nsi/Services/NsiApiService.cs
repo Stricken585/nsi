@@ -9,17 +9,19 @@ public class NsiApiService
 {
     private readonly HttpClient _http;
     private readonly ISession _db;
-
-    private const string UserKey = "f0bd2dfa-ae96-4a3c-9093-0431a246cf8b";
-    private const string Identifier = "1.2.643.5.1.13.13.99.2.1245";
-    private const string BaseUrl = "https://nsi.rosminzdrav.ru/port/rest/data";
+    private readonly string _userKey;
+    private readonly string _identifier;
+    private readonly string _baseUrl;
 
     private const int RetryCount = 5;
-    
-    public NsiApiService(HttpClient http, ISession db)
+
+    public NsiApiService(HttpClient http, ISession db, IConfiguration config)
     {
         _http = http;
         _db = db;
+        _userKey = config["Api:UserKey"]!;
+        _identifier = config["Api:Identifier"]!;
+        _baseUrl = config["Api:BaseUrl"]!;
     }
 
     public async Task<int> FetchAndSaveAsync()
@@ -62,12 +64,13 @@ public class NsiApiService
 
     private async Task<NsiResponse?> FetchPageAsync(int page, int pageSize)
     {
-        var url = $"{BaseUrl}?identifier={Identifier}&userKey={UserKey}&page={page}&size={pageSize}";
+        var url = $"{_baseUrl}?identifier={_identifier}&userKey={_userKey}&page={page}&size={pageSize}";
         for (int attempt = 1; attempt <= RetryCount; attempt++)
         {
             try
-            {
+            {  
                 var response = await _http.GetStringAsync(url);
+                // Console.WriteLine($"Response: {response[..Math.Min(500, response.Length)]}");
                 return JsonSerializer.Deserialize<NsiResponse>(response);
             }
             catch (Exception ex)
@@ -87,22 +90,24 @@ public class NsiApiService
             return date;
         return null;
     }
+    private class NsiResponse
+    {
+        [JsonPropertyName("total")]
+        public int Total { get; set; }
+
+        [JsonPropertyName("list")]
+        public List<List<NsiColumn>> List { get; set; } = [];
+    }
+
+    private class NsiColumn
+    {
+        [JsonPropertyName("column")]
+        public string Column { get; set; } = string.Empty;
+
+        [JsonPropertyName("value")]
+        public string? Value { get; set; }
+    }
 }
 
-public class NsiResponse
-{
-    [JsonPropertyName("total")]
-    public int Total { get; set; }
 
-    [JsonPropertyName("list")]
-    public List<List<NsiColumn>> List { get; set; } = [];
-}
 
-public class NsiColumn
-{
-    [JsonPropertyName("column")]
-    public string Column { get; set; } = string.Empty;
-
-    [JsonPropertyName("value")]
-    public string? Value { get; set; }
-}
