@@ -30,12 +30,25 @@ public class NsiApiService
         while (true)
         {
             var url = $"{BaseUrl}?identifier={Identifier}&userKey={UserKey}&page={page}&size={pageSize}";
-            var response = await _http.GetStringAsync(url);
+            string response = null;
+            try
+            {
+                response = await _http.GetStringAsync(url);
 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            if (string.IsNullOrEmpty(response))
+            {
+                break;
+            }
+            
             var apiResponse = JsonSerializer.Deserialize<NsiResponse>(response);
             if (apiResponse?.List == null || apiResponse.List.Count == 0)
                 break;
-
             using var tx = _db.BeginTransaction();
             foreach (var row in apiResponse.List)
             {
@@ -61,6 +74,7 @@ public class NsiApiService
                 break;
 
             page++;
+            
         }
 
         return savedCount;
