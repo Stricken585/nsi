@@ -1,7 +1,6 @@
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
-using NHibernate.Tool.hbm2ddl;
 using nsi.Models.Map;
 
 namespace nsi.Data;
@@ -13,7 +12,6 @@ public static class NHibernateSessionFactory
         return Fluently.Configure()
             .Database(PostgreSQLConfiguration.PostgreSQL82.ConnectionString(connectionString))
             .Mappings(m => m.FluentMappings.AddFromAssemblyOf<MedicalOrganizationMap>())
-            .ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(false, true))
             .BuildSessionFactory();
     }
 }

@@ -26,8 +26,6 @@ public class NsiController : Controller
 
     public async Task<IActionResult> Import()
     {
-        // const string identifier = "1.2.643.5.1.13.13.99.2.1245";
-        // var identifier = _config["Api:Identifier"]!;
         var count = await _nsi.FetchAndSaveAsync<MedicalOrganization>(_identifier);
         return Json(new { message = $"Импортировано записей: {count}" });
     }

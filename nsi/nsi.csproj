@@ -7,6 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentMigrator" Version="8.0.1" />
+        <PackageReference Include="FluentMigrator.Runner" Version="8.0.1" />
+        <PackageReference Include="FluentMigrator.Runner.Postgres" Version="8.0.1" />
         <PackageReference Include="FluentNHibernate" Version="3.4.0" />
         <PackageReference Include="Npgsql" Version="9.0.3" />
         <PackageReference Include="System.Net.Http.WinHttpHandler" Version="9.0.5" />
