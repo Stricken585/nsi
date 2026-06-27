@@ -1,7 +1,6 @@
 using FluentNHibernate.Mapping;
-using nsi.Models;
 
-namespace nsi.Data;
+namespace nsi.Models.Map;
 
 public class MedicalOrganizationMap : ClassMap<MedicalOrganization>
 {

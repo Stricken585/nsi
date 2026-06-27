@@ -2,6 +2,7 @@ using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
+using nsi.Models.Map;
 
 namespace nsi.Data;
 

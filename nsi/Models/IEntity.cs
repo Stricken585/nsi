@@ -1,6 +1,6 @@
 namespace nsi.Models;
 
-public interface INsiEntity
+public interface IEntity
 {
     void Fill(Dictionary<string, string?> dict);
 }

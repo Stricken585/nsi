@@ -1,6 +1,6 @@
 namespace nsi.Models;
 
-public class MedicalOrganization : INsiEntity
+public class MedicalOrganization : IEntity
 {
     public virtual int Id { get; set; }
     public virtual string Code { get; set; } = string.Empty;
@@ -13,13 +13,13 @@ public class MedicalOrganization : INsiEntity
 
     public void Fill(Dictionary<string, string?> dict)
     {
-        Code      = dict.GetValueOrDefault("code") ?? string.Empty;
-        NameFull  = dict.GetValueOrDefault("nameFull") ?? string.Empty;
+        Code = dict.GetValueOrDefault("code") ?? string.Empty;
+        NameFull = dict.GetValueOrDefault("nameFull") ?? string.Empty;
         NameShort = dict.GetValueOrDefault("nameShort") ?? string.Empty;
-        Region    = dict.GetValueOrDefault("region") ?? string.Empty;
-        EoOid     = dict.GetValueOrDefault("eoOid") ?? string.Empty;
+        Region = dict.GetValueOrDefault("region") ?? string.Empty;
+        EoOid = dict.GetValueOrDefault("eoOid") ?? string.Empty;
         BeginDate = ParseDate(dict.GetValueOrDefault("beginDate"));
-        EndDate   = ParseDate(dict.GetValueOrDefault("endDate"));
+        EndDate = ParseDate(dict.GetValueOrDefault("endDate"));
     }
 
     private static DateTime? ParseDate(string? value)
