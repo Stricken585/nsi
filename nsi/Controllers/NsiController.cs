@@ -9,11 +9,13 @@ public class NsiController : Controller
 {
     private readonly NsiApiService _nsi;
     private readonly ISession _db;
-
-    public NsiController(NsiApiService nsi, ISession db)
+    private readonly string _identifier;
+    
+    public NsiController(NsiApiService nsi, ISession db, IConfiguration config) 
     {
         _nsi = nsi;
         _db = db;
+        _identifier = config["Api:Identifier"]!;
     }
 
     public IActionResult Index()
@@ -24,8 +26,9 @@ public class NsiController : Controller
 
     public async Task<IActionResult> Import()
     {
-        const string identifier = "1.2.643.5.1.13.13.99.2.1245";
-        var count = await _nsi.FetchAndSaveAsync<MedicalOrganization>(identifier);
+        // const string identifier = "1.2.643.5.1.13.13.99.2.1245";
+        // var identifier = _config["Api:Identifier"]!;
+        var count = await _nsi.FetchAndSaveAsync<MedicalOrganization>(_identifier);
         return Json(new { message = $"Импортировано записей: {count}" });
     }
 
