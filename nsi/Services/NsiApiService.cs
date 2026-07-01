@@ -64,7 +64,7 @@ public class NsiApiService
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Attempt {attempt}/{RetryCount} failed: {ex.Message}");
+                Console.WriteLine($"Attempt {attempt}/{RetryCount} failed: {ex.Message} URL: {url}");
             }
         }
         return null;

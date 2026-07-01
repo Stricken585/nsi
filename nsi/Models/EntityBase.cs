@@ -6,7 +6,7 @@ public abstract class EntityBase : IEntity
 {
     public virtual int Id { get; set; }
 
-    public void Fill(Dictionary<string, string?> dict)
+    public virtual void Fill(Dictionary<string, string?> dict)
     {
         foreach (var property in GetType().GetProperties())
         {
