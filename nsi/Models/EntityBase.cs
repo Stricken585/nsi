@@ -2,11 +2,11 @@ using System.Reflection;
 
 namespace nsi.Models;
 
-public abstract class EntityBase : IEntity
+public abstract class EntityBase
 {
-    public virtual int Id { get; set; }
+    public int Id { get; set; }
 
-    public virtual void Fill(Dictionary<string, string?> dict)
+    public void Fill(Dictionary<string, string?> dict)
     {
         foreach (var property in GetType().GetProperties())
         {

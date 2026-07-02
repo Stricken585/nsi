@@ -22,7 +22,7 @@ public class NsiApiService
         _baseUrl = config["Api:BaseUrl"]!;
     }
 
-    public async Task<int> FetchAndSaveAsync<T>(string identifier) where T : IEntity, new()
+    public async Task<int> FetchAndSaveAsync<T>(string identifier) where T : EntityBase, new()
     {
         int page = 1;
         const int pageSize = 100;
